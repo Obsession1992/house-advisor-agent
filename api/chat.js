@@ -1,16 +1,17 @@
-export default async function handler(req, res) {
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.options('/chat', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(204).end();
+});
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+app.post('/chat', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  
   try {
     const response = await fetch('https://api.coze.cn/v2/chat/run', {
       method: 'POST',
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
-
+      
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -39,9 +40,11 @@ export default async function handler(req, res) {
       res.end();
     } else {
       const data = await response.json();
-      return res.status(response.status).json(data);
+      res.status(response.status).json(data);
     }
   } catch (err) {
-    return res.status(502).json({ error: err.message });
+    res.status(502).json({ error: err.message });
   }
-}
+});
+
+module.exports = app;
