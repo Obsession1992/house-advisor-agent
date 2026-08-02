@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch('https://api.coze.cn/v2/chat/run', {
+    const response = await fetch('https://api.coze.cn/v3/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
