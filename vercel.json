@@ -1,8 +1,10 @@
 {
-  "buildCommand": null,
-  "outputDirectory": ".",
+  "builds": [
+    { "src": " **/*.html", "use": "@vercel/static" },
+    { "src": "api/chat.js", "use": "@vercel/node" }
+  ],
   "routes": [
-    { "handle": "filesystem" },
-    { "src": "/api/chat", "dest": "/api/chat.js" }
+    { "src": "/api/chat", "dest": "/api/chat.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
